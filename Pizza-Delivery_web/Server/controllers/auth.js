@@ -2,6 +2,7 @@ const async_handler = require("express-async-handler");
 
 const User = require("../models/Usermodel");
 const generateToken = require("../config/generateToken");
+const { sendPasswordResetEmail } = require("../config/mailer");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -127,7 +128,7 @@ const changePassword = async_handler(async (req, res) => {
 })
 
 
-// generate a short-lived reset token and return it (production: send via email)
+// generate a short-lived reset token and send it via email
 const requestPasswordReset = async_handler(async (req, res) => {
     const { email } = req.body;
     if (!email) {
@@ -135,12 +136,13 @@ const requestPasswordReset = async_handler(async (req, res) => {
         throw new Error("Email is required");
     }
     const user = await User.findOne({ email });
+    // Always return same response to prevent email enumeration
     if (!user) {
-        // Return same response to prevent email enumeration
-        return res.json({ success: true, message: "If this email exists, a reset token has been issued." });
+        return res.json({ success: true, message: "If this email exists, a reset link has been sent." });
     }
     const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-    res.json({ success: true, resetToken });
+    await sendPasswordResetEmail(user.email, resetToken);
+    res.json({ success: true, message: "If this email exists, a reset link has been sent." });
 })
 
 // reset password using the token from requestPasswordReset

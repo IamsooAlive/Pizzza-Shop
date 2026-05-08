@@ -36,24 +36,26 @@ const UserMenu = ({ handleClick, display }) => {
                         <Link to="/profile_dashboard">My Account</Link>
                     </p>
 
-                    <p
-                        onClick={() => {
-                            localStorage.removeItem("token");
-                            window.location.reload();
-                            handleClick();
-                        }}>
-
-                        <Link>LogOut</Link>
+                    <p>
+                        <button
+                            className="navbar-logout-btn"
+                            onClick={() => {
+                                localStorage.removeItem("token");
+                                window.location.reload();
+                                handleClick();
+                            }}>
+                            Log Out
+                        </button>
                     </p>
                 </>
             ) : (
                 <>
 
                     <p onClick={handleClick}>
-                        <Link to="/signup" >SignUP</Link>
+                        <Link to="/signup" >Sign Up</Link>
                     </p>
                     <p onClick={handleClick}>
-                        <Link to="/login" >LogIn</Link>
+                        <Link to="/login" >Log In</Link>
                     </p>
                 </>
             )}
@@ -111,62 +113,60 @@ const Navbar = () => {
         <div className="navbar">
             <div className="navbar-content">
                 <div className="navbar-logo-container">
-                    <p className='navbar-logo poppins-semibold' onClick={() => { navigate("/") }}>
-                        <i className="fa-solid fa-pizza-slice pizza-icon"></i> PizzaLand
-                    </p>
+                    <Link to="/" className='navbar-logo poppins-semibold'>
+                        <i className="fa-solid fa-pizza-slice pizza-icon" aria-hidden="true"></i> PizzaLand
+                    </Link>
                 </div>
                 <div className="navbar-links_container">
                     <Menu />
                 </div>
             </div>
             <div className="navbar-user-actions">
-                <i className="fa-solid fa-circle-user user-icon" onClick={handleOpenUserMenu}></i>
+                <button className="navbar-icon-btn" aria-label="Account menu" onClick={handleOpenUserMenu}>
+                    <i className="fa-solid fa-circle-user user-icon" aria-hidden="true"></i>
+                </button>
                 <UserMenu display={display} handleClick={() => { setOpenUserMenu(false) }} />
                 {!token && (
-                    <Link to="/login" ><i className="fa-solid fa-cart-shopping  cart-icon"></i></Link>
+                    <Link to="/login" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i></Link>
                 )}
                 {token && (
                     <>
-                        <Link to="/profile_dashboard/cart"><i className="fa-solid fa-cart-shopping  cart-icon"></i><span className='tooltip'>{totalItems}</span></Link>
+                        <Link to="/profile_dashboard/cart" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i><span className='tooltip' aria-hidden="true">{totalItems}</span></Link>
                         &nbsp;
                         {user.isAdmin === true && (
-                            <Link to="/profile_dashboard/notifications" >   <i className="fa-solid fa-bell bell-icon" style={{ fontSize: "1.3rem" }}></i>{productsBelow20.length !== 0 && (<span className='tooltip'>{productsBelow20.length}</span>)}</Link>
-
+                            <Link to="/profile_dashboard/notifications" aria-label="Notifications"><i className="fa-solid fa-bell bell-icon" style={{ fontSize: "1.3rem" }} aria-hidden="true"></i>{productsBelow20.length !== 0 && (<span className='tooltip' aria-hidden="true">{productsBelow20.length}</span>)}</Link>
                         )}
                     </>
                 )}
-
-
             </div>
             <div className="navbar-menu">
                 {toggleMenu ? (
-                    <i className="fa-solid fa-xmark cross-icon"
-                        onClick={() => setToggleMenu(false)}></i>
+                    <button className="navbar-icon-btn" aria-label="Close menu" onClick={() => setToggleMenu(false)}>
+                        <i className="fa-solid fa-xmark cross-icon" aria-hidden="true"></i>
+                    </button>
                 ) : (
-                    <i className="fa-solid fa-bars menu-bar"
-                        onClick={() => setToggleMenu(true)}></i>
+                    <button className="navbar-icon-btn" aria-label="Open menu" onClick={() => setToggleMenu(true)}>
+                        <i className="fa-solid fa-bars menu-bar" aria-hidden="true"></i>
+                    </button>
                 )}
                 {toggleMenu && (
                     <div className="navbar-menu_container">
                         <div className="navbar-menu_container-links">
                             <Menu />
                             <div className="navbar-menu_container-links-user-actions">
-                                <i className="fa-solid fa-circle-user user-icon" onClick={handleOpenUserMenu}></i>
+                                <button className="navbar-icon-btn" aria-label="Account menu" onClick={handleOpenUserMenu}>
+                                    <i className="fa-solid fa-circle-user user-icon" aria-hidden="true"></i>
+                                </button>
                                 <UserMenu display={display} handleClick={() => { setOpenUserMenu(false) }} />
                                 {!token && (
-
-                                    <Link to="/login"><i className="fa-solid fa-cart-shopping  cart-icon"></i></Link>
+                                    <Link to="/login" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i></Link>
                                 )}
-                                {
-                                    token && (
-
-                                        <Link to="/profile_dashboard/cart"><i className="fa-solid fa-cart-shopping  cart-icon"></i><span className='tooltip'>{totalItems}</span></Link>
-                                    )
-                                }
+                                {token && (
+                                    <Link to="/profile_dashboard/cart" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i><span className='tooltip' aria-hidden="true">{totalItems}</span></Link>
+                                )}
                                 &nbsp;
                                 {token && user.isAdmin === true && (
-                                    <Link to="/profile_dashboard/notifications" >   <i className="fa-solid fa-bell bell-icon" style={{ fontSize: "1.3rem" }}></i>{productsBelow20.length !== 0 && (<span className='tooltip prdct-tooltip'>{productsBelow20.length}</span>)}</Link>
-
+                                    <Link to="/profile_dashboard/notifications" aria-label="Notifications"><i className="fa-solid fa-bell bell-icon" style={{ fontSize: "1.3rem" }} aria-hidden="true"></i>{productsBelow20.length !== 0 && (<span className='tooltip prdct-tooltip' aria-hidden="true">{productsBelow20.length}</span>)}</Link>
                                 )}
                             </div>
                         </div>

@@ -1,165 +1,143 @@
-import React, { useEffect } from 'react';
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from "react-router-dom";
 import API_BASE_URL from '../../../config/api.js';
 
-const token=localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
 const ForgotPassword = () => {
-    const [credentials, setCredentials] = useState({ email: "", password: "", confirmPassword: "" });
-    let navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const resetToken = searchParams.get("token");
+    const navigate = useNavigate();
 
-    const [display, setDisplay] = useState("none");
-    const [emailDisplay,setEmailDisplay]=useState("initial");
+    const [email, setEmail] = useState("");
+    const [sent, setSent] = useState(false);
+    const [error, setError] = useState("");
 
-    const verifyEmail = async () => {
-            const response = await fetch(`${API_BASE_URL}/api/user/verify_email`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email:credentials.email,
-                }),
-            });
-            const json = await response.json();
-            if (json.success==true) {
-                alert("Email verified!")
-                setEmailDisplay("none");
-             setDisplay("initial");
-            } else {
-                alert("Error : No User found with this email!")
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [isShown, setIsShown] = useState(false);
+    const [resetError, setResetError] = useState("");
 
-            }
-       
-    }
+    useEffect(() => {
+        if (token) navigate("/");
+    }, []);
 
-    const handleSubmit = async (e) => {
+    const handleRequestReset = async (e) => {
         e.preventDefault();
-        if (credentials.password == credentials.confirmPassword) {
-
-            const response = await fetch(`${API_BASE_URL}/api/user/forgot_password`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email:credentials.email,
-                    password: credentials.password,
-                }),
-            });
-            const json = await response.json();
-            if (response.status == 201) {
-                alert("Password changed successfully!")
-
-                navigate("/login");
-            } else {
-                alert("Error : An unknown error occurred!")
-
-            }
-        }else{
-            alert("Password and Confirm Password should match!");
+        setError("");
+        const response = await fetch(`${API_BASE_URL}/api/user/request_password_reset`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+        if (response.ok) {
+            setSent(true);
+        } else {
+            setError("Something went wrong. Please try again.");
         }
     };
 
-    const onChange = (e) => {
-        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+        setResetError("");
+        if (password !== confirmPassword) {
+            setResetError("Passwords do not match.");
+            return;
+        }
+        const response = await fetch(`${API_BASE_URL}/api/user/forgot_password`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resetToken, password }),
+        });
+        if (response.ok) {
+            navigate("/login");
+        } else {
+            setResetError("Reset link is invalid or has expired. Please request a new one.");
+        }
     };
 
-    const [isShown, setIsSHown] = useState(false);
-
-    // This function is called when the checkbox is checked or unchecked
-    const togglePassword = () => {
-        setIsSHown((isShown) => !isShown);
-    };
-
-
-    useEffect(() => {
-      if(token){
-        navigate("/")
-      }
-    }, [])
-    
-
-
-    return (
-        <>
-            <div className="main-div" style={{ width: "68vw", margin: "auto" }}>
-                <h1 className="section-title poppins-semibold form-title">Change Your Password</h1>
-                <form
-                    onSubmit={handleSubmit}
-                    className="form"
-                >
-
-                    <input
-                        type="email"
-                        style={{display:emailDisplay}}
-                        value={credentials.email}
-                        onChange={onChange}
-                        id="email"
-                        name="email"
-                        aria-describedby="emailHelp"
-                        placeholder="Enter your email"
-                        required
-
-                    />
-
-                    <button type="button" id="verify-email-btn" onClick={verifyEmail} style={{display:emailDisplay}}>
-                        Verify Email
-                    </button>
-
-
+    // Step 3: token in URL — show new password form
+    if (resetToken) {
+        return (
+            <div className="main-div">
+                <h1 className="section-title poppins-semibold">Set New Password</h1>
+                {resetError && <p role="alert" style={{ color: "#c0392b", fontWeight: 600, textAlign: "center" }}>{resetError}</p>}
+                <form onSubmit={handleResetPassword} className="login-signup-form">
+                    <label htmlFor="password">New Password</label>
                     <input
                         type={isShown ? "text" : "password"}
-                        style={{ display: display }}
-                        className="form-control"
-                        value={credentials.password}
-                        onChange={onChange}
-                        name="password"
                         id="password"
-                        placeholder="Enter new Password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Minimum 8 characters…"
+                        autoComplete="new-password"
                         minLength={8}
                         required
                     />
-
+                    <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
                         type={isShown ? "text" : "password"}
-                        className="form-control"
-                        style={{ display: display }}
-                        value={credentials.confirmPassword}
-                        onChange={onChange}
-                        name="confirmPassword"
                         id="confirmPassword"
-                        placeholder="Confirm new Password"
+                        name="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repeat your new password…"
+                        autoComplete="new-password"
                         minLength={8}
                         required
                     />
-
                     <div className="form-check">
                         <input
                             type="checkbox"
-                            style={{ display: display }}
                             className="form-check-input"
                             id="passcheck"
                             checked={isShown}
-                            onChange={togglePassword}
+                            onChange={() => setIsShown(v => !v)}
                         />
                         &nbsp;
-                        <label className="form-check-label" htmlFor="passcheck" style={{ display: display }}>
-                            Show Password
-                        </label>
+                        <label className="form-check-label" htmlFor="passcheck">Show Password</label>
                     </div>
-                    <hr />
-
-
-                    <button type="submit" id="edit-details-btn" style={{ display: display }} >
-                        Change Password
-                    </button>
+                    <button type="submit" id="edit-details-btn">Set New Password</button>
                 </form>
             </div>
-        </>
-    )
-}
+        );
+    }
+
+    // Step 2: email sent — confirmation message
+    if (sent) {
+        return (
+            <div className="main-div">
+                <h1 className="section-title poppins-semibold">Check Your Email</h1>
+                <p style={{ textAlign: "center" }}>
+                    A password reset link has been sent to <strong>{email}</strong>. It expires in 15&nbsp;minutes.
+                </p>
+            </div>
+        );
+    }
+
+    // Step 1: enter email
+    return (
+        <div className="main-div">
+            <h1 className="section-title poppins-semibold">Forgot Password</h1>
+            {error && <p role="alert" style={{ color: "#c0392b", fontWeight: 600, textAlign: "center" }}>{error}</p>}
+            <form onSubmit={handleRequestReset} className="login-signup-form">
+                <label htmlFor="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email…"
+                    autoComplete="email"
+                    spellCheck={false}
+                    required
+                />
+                <button type="submit" id="verify-email-btn">Send Reset Link</button>
+            </form>
+        </div>
+    );
+};
 
 export default ForgotPassword;

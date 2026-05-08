@@ -8,8 +8,11 @@ const SignUp = () => {
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", address: "" });
     let navigate = useNavigate();
 
+    const [error, setError] = useState("");
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         const response = await fetch(`${API_BASE_URL}/api/user/signup`, {
             method: "POST",
             headers: {
@@ -23,8 +26,7 @@ const SignUp = () => {
             }),
         });
         if(response.status===400){
-            alert("Error : An unknown error occurred!");
-            window.location.reload();
+            setError("Sign up failed. Please check your details and try again.");
         }else{
             const json = await response.json();
             if (json.success) {
@@ -50,36 +52,39 @@ const SignUp = () => {
     return (
         <>
             <div className="main-div">
-                <h1 className="section-title poppins-semibold">Sign Up into your account</h1>
+                <h1 className="section-title poppins-semibold">Sign Up</h1>
+                {error && <p role="alert" style={{ color: "#c0392b", fontWeight: 600 }}>{error}</p>}
                 <form
                     onSubmit={handleSubmit}
                     className="login-signup-form"
                 >
 
-
+                    <label htmlFor="name">Name</label>
                     <input
                         type="text"
                         value={credentials.name}
                         onChange={onChange}
                         id="name"
                         name="name"
-                        aria-describedby="name"
-                        placeholder="Enter your name"
+                        placeholder="Enter your name…"
+                        autoComplete="name"
                         required
-
                     />
+
+                    <label htmlFor="email">Email</label>
                     <input
                         type="email"
                         value={credentials.email}
                         onChange={onChange}
                         id="email"
                         name="email"
-                        aria-describedby="emailHelp"
-                        placeholder="Enter your email"
+                        placeholder="Enter your email…"
+                        autoComplete="email"
+                        spellCheck={false}
                         required
-
                     />
 
+                    <label htmlFor="password">Password</label>
                     <input
                         type={isShown ? "text" : "password"}
                         className="form-control"
@@ -87,7 +92,8 @@ const SignUp = () => {
                         onChange={onChange}
                         name="password"
                         id="password"
-                        placeholder="Enter your password"
+                        placeholder="Minimum 8 characters…"
+                        autoComplete="new-password"
                         minLength={8}
                         required
                     />
@@ -106,7 +112,8 @@ const SignUp = () => {
                         </label>
                     </div>
 
-                    <textarea name="address" id="address" value={credentials.address} placeholder='Enter your address' onChange={onChange} required></textarea>
+                    <label htmlFor="address">Delivery Address</label>
+                    <textarea name="address" id="address" value={credentials.address} placeholder='Enter your delivery address…' autoComplete="street-address" onChange={onChange} required></textarea>
                     <hr />
 
                     <p>

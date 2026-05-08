@@ -171,6 +171,16 @@ a {
   outline: none;
 }
 
+.login-signup-form input[type="text"]:focus-visible,
+.login-signup-form input[type="email"]:focus-visible,
+.login-signup-form input[type="password"]:focus-visible,
+.form input[type="password"]:focus-visible,
+.form input[type="email"]:focus-visible,
+.login-signup-form textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 textarea {
   height: 148px;
   resize: none;
@@ -184,6 +194,13 @@ textarea {
   color: var(--text-colorb);
   border: none;
   outline: none;
+}
+
+.login-signup-form button[type="submit"]:focus-visible,
+.login-signup-form button[type="button"]:focus-visible,
+.buttons-container button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 #signup-btn {
@@ -473,5 +490,37 @@ textarea {
 @media screen and (min-width:801px) and (max-width:950px) {
   .cart-img {
     height: 10rem;
+  }
+}
+
+/* Touch interaction */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Skip link for keyboard/screen reader users */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: .5rem 1rem;
+  background: var(--color-primary);
+  color: var(--text-colorb);
+  font-weight: 600;
+  z-index: 9999;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

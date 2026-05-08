@@ -46,7 +46,7 @@
 
 
 .header-btn {
-
+    display: inline-block;
     font-weight: 600;
     font-size: 1.4rem;
     line-height: 20px;
@@ -55,9 +55,13 @@
     padding: 1.5rem 2.8rem;
     color: var(--text-colorb);
     cursor: pointer;
-    outline: none;
     border-radius: .5rem;
+    text-decoration: none;
+}
 
+.header-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
 }
 
 .header-btn:hover{
