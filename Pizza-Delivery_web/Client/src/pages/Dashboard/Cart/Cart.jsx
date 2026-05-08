@@ -6,7 +6,7 @@ import { STATUSES } from '../../../redux/slices/productSlice';
 import { fetchCartItems } from '../../../redux/slices/cartSlice';
 import { getUserDetails } from '../../../redux/slices/userSlice';
 import axios from 'axios';
-import Crypto from "crypto-js";
+
 import OrderAddressModal from '../../../components/OrderModal/OrderAddressModal';
 import { openOrHideModal } from '../../../hooks/OpenOrHideModal';
 
@@ -62,79 +62,54 @@ const Cart = () => {
   const checkoutHandler = async () => {
     const { data: { key } } = await axios.get("http://localhost:8080/api/order/getKey");
 
-    const { data: { keySecret } } = await axios.get("http://localhost:8080/api/order/getKeySecret");
-
     const { data: { order } } = await axios.post("http://localhost:8080/api/order/checkout", {
       amount: (totalPrice + 200)
-    })
+    });
 
     const options = {
-      key_id: await key,
+      key_id: key,
       amount: order.amount,
       currency: "INR",
       name: "PizzaLand",
       description: "Pizza order Checkout",
 
-      order_id: await order.id,
+      order_id: order.id,
 
       handler: async function (response) {
-        let keySec = await keySecret;
-        const string = `${response.razorpay_order_id}|${response.razorpay_payment_id}`
-        if (keySecret) {
-          const isAuthentic = Crypto.HmacSHA256(string, keySec).toString() === response.razorpay_signature;
-          if (isAuthentic) {
-            if (address == "") {
-              try {
-                await axios.post(`http://localhost:8080/api/order/place_order`, {
-                  totalPrice: (totalPrice + 200),
-                  paymentDone: true,
-                  razpOrderId: response.razorpay_order_id,
-                  items: [...products],
-                },
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                      "auth-token": localStorage.getItem("token")
-                    }
-                  }
+        try {
+          const { data: { success } } = await axios.post(
+            "http://localhost:8080/api/order/verify_payment",
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            },
+            { headers: { "auth-token": localStorage.getItem("token") } }
+          );
 
-                );
-                alert("Order Placed Successfully!")
-                navigate(`/paymentsuccess?reference=${response.razorpay_payment_id}`);
-              } catch (error) {
-                console.log(error);
-                alert("Something went wrong!");
-              }
-            } else {
-              try {
-                await axios.post(`http://localhost:8080/api/order/place_order`, {
-                  address: address,
-                  totalPrice: (totalPrice + 200),
-                  paymentDone: true,
-                  razpOrderId: response.razorpay_order_id,
-                  items: [...products],
-                },
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                      "auth-token": localStorage.getItem("token")
-                    }
-                  }
+          if (success) {
+            const orderPayload = {
+              totalPrice: (totalPrice + 200),
+              paymentDone: true,
+              razpOrderId: response.razorpay_order_id,
+              items: [...products],
+            };
+            if (address !== "") orderPayload.address = address;
 
-                );
-                alert("Order Placed Successfully!")
-                navigate(`/paymentsuccess?reference=${response.razorpay_payment_id}`);
-              } catch (error) {
-                console.log(error);
-                alert("Something went wrong!");
-              }
-            }
-
+            await axios.post(
+              "http://localhost:8080/api/order/place_order",
+              orderPayload,
+              { headers: { "Content-Type": "application/json", "auth-token": localStorage.getItem("token") } }
+            );
+            alert("Order Placed Successfully!");
+            navigate(`/paymentsuccess?reference=${response.razorpay_payment_id}`);
           } else {
-            navigate(`/paymentfailure`)
+            navigate("/paymentfailure");
           }
+        } catch (error) {
+          console.log(error);
+          alert("Something went wrong!");
         }
-
       },
       prefill: {
         name: await user.name,
