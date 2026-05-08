@@ -35,7 +35,12 @@ app.use("/api/user", AuthRoutes);
 app.use("/api/order", OrderRoutes); 
 app.use("/api/product", ProductRoutes);
 
-app.listen(port, async () => {
-  await connectDB();
-  console.log(`Server running on port : ${port}`);
-});
+connectDB();
+
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server running on port : ${port}`);
+  });
+}
+
+module.exports = app;

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUSES } from "./productSlice";
+import API_BASE_URL from '../../config/api.js';
 
 const userSlice = createSlice({
     name:"user",
@@ -43,7 +44,7 @@ export default userSlice.reducer;
 
 //function to fetch products
 export const getUserDetails=createAsyncThunk("user/fetch",async()=>{
-    const response = await fetch("http://localhost:8080/api/user/", {
+    const response = await fetch(`${API_BASE_URL}/api/user/`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

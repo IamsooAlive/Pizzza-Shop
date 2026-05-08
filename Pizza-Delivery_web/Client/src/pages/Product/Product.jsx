@@ -5,6 +5,7 @@ import { getProduct } from "../../hooks/getProduct";
 import { categories, product_types } from "../../data";
 import axios from "axios";
 import toppingImg from "../../assets/veg-toppings.jpg";
+import API_BASE_URL from '../../config/api.js';
 
 const token = localStorage.getItem("token");
 
@@ -61,7 +62,7 @@ const Product = () => {
 
         if ((Product_type == 0)) {
           try {
-            await axios.post(`http://localhost:8080/api/product/cart/addToCart`, {
+            await axios.post(`${API_BASE_URL}/api/product/cart/addToCart`, {
               name,
               variant: variantVal,
               price,

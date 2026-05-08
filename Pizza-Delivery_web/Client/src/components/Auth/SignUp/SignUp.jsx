@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import API_BASE_URL from '../../../config/api.js';
 
 const SignUp = () => {
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", address: "" });
@@ -9,7 +10,7 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("http://localhost:8080/api/user/signup", {
+        const response = await fetch(`${API_BASE_URL}/api/user/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

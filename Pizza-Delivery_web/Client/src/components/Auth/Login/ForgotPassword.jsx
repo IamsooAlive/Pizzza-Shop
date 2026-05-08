@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import API_BASE_URL from '../../../config/api.js';
 
 const token=localStorage.getItem("token");
 
@@ -13,7 +14,7 @@ const ForgotPassword = () => {
     const [emailDisplay,setEmailDisplay]=useState("initial");
 
     const verifyEmail = async () => {
-            const response = await fetch("http://localhost:8080/api/user/verify_email", {
+            const response = await fetch(`${API_BASE_URL}/api/user/verify_email`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +39,7 @@ const ForgotPassword = () => {
         e.preventDefault();
         if (credentials.password == credentials.confirmPassword) {
 
-            const response = await fetch("http://localhost:8080/api/user/forgot_password", {
+            const response = await fetch(`${API_BASE_URL}/api/user/forgot_password`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

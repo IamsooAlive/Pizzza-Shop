@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api.js';
 
 const CartCard = ({ product , link }) => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const CartCard = ({ product , link }) => {
 
   const updateQty = async () => {
     try {
-      await axios.put(`http://localhost:8080/api/product/cart/${product._id}/updateQty`, {
+      await axios.put(`${API_BASE_URL}/api/product/cart/${product._id}/updateQty`, {
         quantity: quantity,
       },
         {
@@ -30,7 +31,7 @@ const CartCard = ({ product , link }) => {
   }
   const removeFromCart = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/product/cart/${product._id}/removeFromCart`,
+      await axios.delete(`${API_BASE_URL}/api/product/cart/${product._id}/removeFromCart`,
         {
           headers: {
             "Content-Type": "application/json",

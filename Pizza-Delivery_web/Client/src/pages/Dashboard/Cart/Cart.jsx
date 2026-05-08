@@ -11,6 +11,7 @@ import OrderAddressModal from '../../../components/OrderModal/OrderAddressModal'
 import { openOrHideModal } from '../../../hooks/OpenOrHideModal';
 
 
+import API_BASE_URL from '../../../config/api.js';
 
 const token = localStorage.getItem("token");
 
@@ -60,9 +61,9 @@ const Cart = () => {
 
 
   const checkoutHandler = async () => {
-    const { data: { key } } = await axios.get("http://localhost:8080/api/order/getKey");
+    const { data: { key } } = await axios.get(`${API_BASE_URL}/api/order/getKey`);
 
-    const { data: { order } } = await axios.post("http://localhost:8080/api/order/checkout", {
+    const { data: { order } } = await axios.post(`${API_BASE_URL}/api/order/checkout`, {
       amount: (totalPrice + 200)
     });
 
@@ -78,7 +79,7 @@ const Cart = () => {
       handler: async function (response) {
         try {
           const { data: { success } } = await axios.post(
-            "http://localhost:8080/api/order/verify_payment",
+            `${API_BASE_URL}/api/order/verify_payment`,
             {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -97,7 +98,7 @@ const Cart = () => {
             if (address !== "") orderPayload.address = address;
 
             await axios.post(
-              "http://localhost:8080/api/order/place_order",
+              `${API_BASE_URL}/api/order/place_order`,
               orderPayload,
               { headers: { "Content-Type": "application/json", "auth-token": localStorage.getItem("token") } }
             );

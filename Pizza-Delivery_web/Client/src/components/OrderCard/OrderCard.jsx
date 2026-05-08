@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { orderStatusArr } from '../../data';
 import OrderItem from '../OrderItem/OrderItem';
 
+import API_BASE_URL from '../../config/api.js';
 
 const OrderCard = ({ items, totalPrice, address, isAdmin, orderStatus, order,  userId }) => {
   const customerId = order.customerId;
@@ -17,7 +18,7 @@ const OrderCard = ({ items, totalPrice, address, isAdmin, orderStatus, order,  u
 
 
   const deleteOrder = async () => {
-    const response = await fetch(`http://localhost:8080/api/order/delete_order/${order._id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/order/delete_order/${order._id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +35,7 @@ const OrderCard = ({ items, totalPrice, address, isAdmin, orderStatus, order,  u
   }
 
   const updateOrderStatus = async () => {
-    const response = await fetch(`http://localhost:8080/api/order/${order._id}/update_status`, {
+    const response = await fetch(`${API_BASE_URL}/api/order/${order._id}/update_status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
