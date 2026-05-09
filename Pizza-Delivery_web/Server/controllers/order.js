@@ -12,15 +12,12 @@ const CartItem = require("../models/cartItemModel");
 
 //for payment with razorpay
 const Razorpay = require("razorpay");
-const instance = new Razorpay({
-    key_id: process.env.KEY_ID,
-    key_secret: process.env.KEY_SECRET,
-})
 
 
 
 //create a razorpay order
 const Checkout = async (req, res) => {
+    const instance = new Razorpay({ key_id: process.env.KEY_ID, key_secret: process.env.KEY_SECRET });
     const options = {
         amount: Number(req.body.amount * 100),
         currency: "INR",

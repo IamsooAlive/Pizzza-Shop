@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const registerUser = async_handler(async (req, res) => {
     const { name, email, password, address } = req.body;
 
-    if (!name || !email || (!password && password.length >= 8) || !address) {
+    if (!name || !email || (!password || password.length < 8) || !address) {
         res.status(400);
         throw new Error("Please enter all the fields");
     }
