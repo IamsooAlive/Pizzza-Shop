@@ -5,12 +5,13 @@ import axios from 'axios';
 
 
 
+import API_BASE_URL from '../../config/api.js';
 
 const ProductCard = ({ product, variants}) => {
   const deleteProduct = async (productId) => {
 
     try {
-      await axios.delete(`http://localhost:8080/api/product/${productId}/delete`,
+      await axios.delete(`${API_BASE_URL}/api/product/${productId}/delete`,
       {
         headers:{
           "Content-Type":"application/json",

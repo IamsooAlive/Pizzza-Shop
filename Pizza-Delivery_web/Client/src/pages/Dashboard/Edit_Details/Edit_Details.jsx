@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from "react";
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from '../../../config/api.js';
 
 const Edit_Details = () => {
     const { data: userDetails, status } = useSelector((state) => state.user);
@@ -11,7 +12,7 @@ const Edit_Details = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("http://localhost:8080/api/user/edit_details", {
+        const response = await fetch(`${API_BASE_URL}/api/user/edit_details`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

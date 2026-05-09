@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUSES } from "./productSlice";
 
+import API_BASE_URL from '../../config/api.js';
 
 const cheeseSlice = createSlice({
     name:"cheese",
@@ -44,7 +45,7 @@ export default cheeseSlice.reducer;
 
 //function to fetch products from cart
 export const fetchCheeses=createAsyncThunk("cheeses/fetch",async()=>{
-    const response = await fetch(`http://localhost:8080/api/product/getProducts?productType=4`, {
+    const response = await fetch(`${API_BASE_URL}/api/product/getProducts?productType=4`, {
         method: "GET",
         headers: {
             "Content-Type": "application-json"

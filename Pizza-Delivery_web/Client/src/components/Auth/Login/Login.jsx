@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import API_BASE_URL from '../../../config/api.js';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
+    const [error, setError] = useState("");
     let navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const response = await fetch("http://localhost:8080/api/user/login", {
+        setError("");
+
+        const response = await fetch(`${API_BASE_URL}/api/user/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -21,14 +24,11 @@ const Login = () => {
         });
 
         if(response.status === 400){
-            alert("Error : Invalid email or password!");
-            window.location.reload();
-           
+            setError("Invalid email or password. Please try again.");
         }else{
             const json = await response.json();
             if(json.success){
                 localStorage.setItem("token", json.token);
-                alert("Logged in successfully!")
                 navigate("/");
                 window.location.reload();
             }
@@ -51,24 +51,26 @@ const Login = () => {
     return (
         <div className="main-div">
             <h1 className="section-title poppins-semibold">Log In to continue</h1>
+            {error && <p role="alert" style={{ color: "#c0392b", fontWeight: 600 }}>{error}</p>}
             <form
                 onSubmit={handleSubmit}
                 className="login-signup-form"
             >
 
-
+                <label htmlFor="email">Email</label>
                 <input
                     type="email"
                     value={credentials.email}
                     onChange={onChange}
                     id="email"
                     name="email"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter your email"
+                    placeholder="Enter your email…"
+                    autoComplete="email"
+                    spellCheck={false}
                     required
-
                 />
 
+                <label htmlFor="password">Password</label>
                 <input
                     type={isShown ? "text" : "password"}
                     className="form-control"
@@ -76,7 +78,8 @@ const Login = () => {
                     onChange={onChange}
                     name="password"
                     id="password"
-                    placeholder="Enter your password"
+                    placeholder="Enter your password…"
+                    autoComplete="current-password"
                     minLength={8}
                     required
                 />

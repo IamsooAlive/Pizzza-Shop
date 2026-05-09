@@ -9,7 +9,7 @@ const fetchUser = async_handler(async (req, res, next) => {
 
     if (!token) {
         res.status(401).send({ error: "Please authenticate using valid token!" });
-
+        return;
     }
 
     try {

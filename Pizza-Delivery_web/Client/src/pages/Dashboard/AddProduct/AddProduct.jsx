@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { variantsArr, product_types, categories } from '../../../data';
 import "../../../AddProduct_EditProduct.css";
 import axios from 'axios';
+import API_BASE_URL from '../../../config/api.js';
 
 const token = localStorage.getItem("token");
 
@@ -58,7 +59,7 @@ const AddProduct = () => {
 
 
       try {
-        await axios.post("http://localhost:8080/api/product/create", {
+        await axios.post(`${API_BASE_URL}/api/product/create`, {
           name,
           product_type: Product_type || 0,
           variants: [...variants],

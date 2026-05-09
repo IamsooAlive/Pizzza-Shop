@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from '../../../config/api.js';
 
 const Change_password = () => {
     const [credentials, setCredentials] = useState({ password:"",confirmPassword: "" });
@@ -8,7 +9,7 @@ const Change_password = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("http://localhost:8080/api/user/change_password", {
+        const response = await fetch(`${API_BASE_URL}/api/user/change_password`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

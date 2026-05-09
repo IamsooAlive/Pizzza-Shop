@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+import API_BASE_URL from '../../config/api.js';
 
 export const STATUSES = Object.freeze({
     IDLE: "idle",
@@ -49,7 +50,7 @@ export default productSlice.reducer;
 
 //function to fetch products
 export const fetchProducts = createAsyncThunk("products/fetch", async () => {
-    const response = await fetch("http://localhost:8080/api/product/view_products");
+    const response = await fetch(`${API_BASE_URL}/api/product/view_products`);
     const data = await response.json();
     return data;
 })

@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const crypto = require("crypto");
+const mongoose = require("mongoose");
 const async_handler = require("express-async-handler");
 
 const Order = require("../models/Ordermodel");
@@ -10,15 +12,12 @@ const CartItem = require("../models/cartItemModel");
 
 //for payment with razorpay
 const Razorpay = require("razorpay");
-const instance = new Razorpay({
-    key_id: process.env.KEY_ID,
-    key_secret: process.env.KEY_SECRET,
-})
 
 
 
 //create a razorpay order
 const Checkout = async (req, res) => {
+    const instance = new Razorpay({ key_id: process.env.KEY_ID, key_secret: process.env.KEY_SECRET });
     const options = {
         amount: Number(req.body.amount * 100),
         currency: "INR",
@@ -108,6 +107,9 @@ const viewOrder = async_handler(async (req, res) => {
         const userId = req.user.id;
         const user = await User.findById(userId).select("-password");
         const orderId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ error: "Invalid order ID" });
+        }
         const order = await Order.findById(orderId);
         if (user) {
             if (user.isAdmin == true) {
@@ -143,6 +145,9 @@ const deleteOrder = async_handler(async (req, res) => {
         const userId = req.user.id;
         const user = await User.findById(userId).select("-password");
         const orderId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ error: "Invalid order ID" });
+        }
         const order = await Order.findById(orderId);
 
         if (user) {
@@ -243,6 +248,9 @@ const updateOrderStatus = async_handler(async (req, res) => {
         const userId = req.user.id;
         const user = await User.findById(userId).select("-password");
         const orderId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ error: "Invalid order ID" });
+        }
         const order = await Order.findById(orderId);
         const { status } = req.body;
         let newOrder = {};
@@ -261,4 +269,26 @@ const updateOrderStatus = async_handler(async (req, res) => {
 })
 
 
-module.exports = { Checkout, placeOrder, viewOrder, viewAllOrders, deleteOrder, updateOrderStatus };
+// verify razorpay payment signature server-side
+const verifyPayment = async_handler(async (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        res.status(400);
+        throw new Error("Missing payment verification fields");
+    }
+
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const expectedSignature = crypto
+        .createHmac("sha256", process.env.KEY_SECRET)
+        .update(body)
+        .digest("hex");
+
+    if (expectedSignature === razorpay_signature) {
+        res.status(200).json({ success: true });
+    } else {
+        res.status(400).json({ success: false, error: "Invalid payment signature" });
+    }
+});
+
+module.exports = { Checkout, placeOrder, viewOrder, viewAllOrders, deleteOrder, updateOrderStatus, verifyPayment };

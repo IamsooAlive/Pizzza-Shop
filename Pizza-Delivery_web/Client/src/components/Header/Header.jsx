@@ -12,18 +12,15 @@ const Header = () => {
       <div className="header-part">
         <div className="header_text">
           <div className='header_text-container'>
-            <h1 className="heading poppins-bold">THE BEST PIZZA IN TOWN!</h1>
+            <h1 className="heading poppins-bold">The Best Pizza in Town!</h1>
             <p className="header-desc">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut blandit arcu
-              in pretium molestie. Interdum et malesuada fames acme. Lorem ipsum dolor
-              sit amet, consectetur adipiscing elit.
+              Fresh ingredients, handcrafted dough, and bold flavours — build your perfect pizza
+              and get it delivered to your door in minutes.
             </p>
           </div>
-          <button className='header-btn'>
-            <Link to="/">
-              Order Now
-            </Link>
-          </button>
+          <Link to="/custom_pizza" className='header-btn'>
+            Order Now
+          </Link>
         </div>
         <div className="container" style={{ position: "relative", zIndex: "-99" }}>
           <div style={{ backgroundImage: `url(${headerBG})` }}></div>

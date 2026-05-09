@@ -8,6 +8,7 @@ import axios from 'axios';
 
 
 
+import API_BASE_URL from '../../../config/api.js';
 
 const Edit_Product = () => {
 
@@ -114,7 +115,7 @@ const Edit_Product = () => {
       }
 
       try {
-        await axios.put(`http://localhost:8080/api/product/${productId}/update`, {
+        await axios.put(`${API_BASE_URL}/api/product/${productId}/update`, {
           name: name,
           product_type: Product_type,
           variants: [...variants],

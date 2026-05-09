@@ -11,6 +11,7 @@ import { searchSauces} from '../../redux/slices/sauceSlice';
 import { searchToppings} from '../../redux/slices/toppingSlice';
 import axios from 'axios';
 import "../../AddProduct_EditProduct.css";
+import API_BASE_URL from '../../config/api.js';
 
 const token = localStorage.getItem("token");
 
@@ -65,7 +66,7 @@ const CustomPizza = () => {
             setExtraOptions([...pizzaToppingsVal, { ...pizzaSauceVal }, { ...pizzaCheeseVal }]);
             if (token) {
                 try {
-                    const response = await axios.post(`http://localhost:8080/api/product/cart/addToCart`, {
+                    const response = await axios.post(`${API_BASE_URL}/api/product/cart/addToCart`, {
                         name: pizzaCrustVal.name,
                         variant: { ...variantVal },
                         price: (pizzaCrustVal.price),

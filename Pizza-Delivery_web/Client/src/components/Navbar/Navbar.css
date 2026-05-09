@@ -97,6 +97,40 @@
     font-size: 1.45rem;
     cursor: pointer;
     color:var(--text-colora);
+    text-decoration: none;
+}
+
+.navbar-icon-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-icon-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: .25rem;
+}
+
+.navbar-logout-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: var(--text-colora);
+    text-transform: capitalize;
+}
+
+.navbar-logout-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .menu-bar,
