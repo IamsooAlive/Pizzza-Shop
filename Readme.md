@@ -13,9 +13,52 @@ In my web development and Designing internship I completed the level 3 task. The
 
 4. Inventory Management and Product Stock Updates: For the admin side, i implemented a mini inventory management system. It tracked the availability of ingredients, updating stock levels after each order. This ensured a smooth and efficient process for both users and admin.And admin will be able to see notifications if any product’s quantity falls below a threshold, ensuring timely replenishment and preventing any disruption in service.
 
-5. Gratitude to Oasis Infobyte: I am immensely grateful to the entire Oasis Infobyte team for their guidance and support throughout this internship journey. The collaborative environment, mentorship, and the opportunity to work on a project that combines technology and user experience have been invaluable.
+⏺️ Prerequisites                                                                                                                                                                                                   
+                                                                                                                                                                                                                  
+  Install these first (if not already):                                                                                                                                                                           
+  - https://nodejs.org — download the LTS version, run the installer                                                                                                                                              
+  - https://git-scm.com/download/win — run the installer with default options                                                                                                                                     
+                                                                                                                                                                                                                  
+  ---                                                                                                                                                                                                             
+  Setup (open Command Prompt or PowerShell)                                                                                                                                                                       
+                                                                                                                                                                                                                  
+  1. Clone the repo                                                                                                                                                                                               
+  git clone https://github.com/IamsooAlive/Pizzza-Shop.git                                                                                                                                                        
+  cd Pizzza-Shop\Pizza-Delivery_web                                                                                                                                                                               
+                                                                                                                                                                                                                  
+  2. Install dependencies                                                                                                                                                                                         
+  npm install                                                                                                                                                                                                     
+  cd Client                                                                                                                                                                                                       
+  npm install                                                                                                                                                                                                     
+  cd ..\Server                                                                                                                                                                                                    
+  npm install                                                                                                                                                                                                     
+  cd ..                                                                                                                                                                                                           
+                                                                                                                                                                                                                  
+  3. Create Server\.env                                                                                                                                                                                        
+                                                                                                                                                                                                                  
+  Open Notepad, paste this, save as Server\.env (make sure it's not saved as .env.txt):                                                                                                                           
+  PORT=8080                                                                                                                                                                                                       
+  MONGO_URI=mongodb+srv://mervinsequeira485_db_user:TrQwLuSZ3dssebN8@cluster0.ydxcfgu.mongodb.net/pizzaland?retryWrites=true&w=majority&appName=Cluster0                                                          
+  JWT_SECRET=92a2942ba05ebcfb50df725fe31ea2c1955e8ffc1ba1ab2e14f3aba3a33c8cd4                                                                                                                                     
+  KEY_ID=                                                                                                                                                                                                         
+  KEY_SECRET=                                                                                                                                                                                                     
+  CLIENT_URL=http://localhost:5173                                                                                                                                                                                
+  RESEND_API_KEY=                                                                                                                                                                                                 
+  FROM_EMAIL=                                                                                                                                                                                                     
+                                                                                                                                                                                                               
+  4. Create Client\.env
+                                                                                                                                                                                                                  
+  Same way, save as Client\.env:                                                                                                                                                                                  
+  VITE_API_BASE_URL=http://localhost:8080                                                                                                                                                                         
+                                                                                                                                                                                                                  
+  5. Seed the database (first time only)                                                                                                                                                                          
+  cd Server                                                                                                                                                                                                       
+  node seed.js                                                                                                                                                                                                    
+  cd ..                                                                                                                                                                                                           
+                                                                                                                                                                                                                  
+  6. Run the app                                                                                                                                                                                               
+  npm start
 
-
-* Linkedin Video and Post :https://www.linkedin.com/posts/eshita-das-084b962b0_level3-webdevelopment-oasisinfobyte-activity-7206530934668447745-_xqu?utm_source=share&utm_medium=member_desktop
-
-* Official Website link:https://oasisinfobyte.com/
+  Then open http://localhost:5173 in the browser.
+                                                                                                                                                                                                                  
+  Admin login: admin@pizzaland.com / Admin@1234
