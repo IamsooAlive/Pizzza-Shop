@@ -13,16 +13,14 @@ import axios from 'axios';
 import "../../AddProduct_EditProduct.css";
 import API_BASE_URL from '../../config/api.js';
 
-const token = localStorage.getItem("token");
-
 const CustomPizza = () => {
     const navigate = useNavigate()
 
     const dispatch = useDispatch();
-    const { data: pizzaCrusts, status } = useSelector((state) => state.crust);
-    const { data: pizzaSauces, Sts } = useSelector((state) => state.sauce);
-    const { data: pizzaToppings, sTS } = useSelector((state) => state.topping);
-    const { data: pizzaCheeses, sts } = useSelector((state) => state.cheese);
+    const { data: pizzaCrusts } = useSelector((state) => state.crust);
+    const { data: pizzaSauces } = useSelector((state) => state.sauce);
+    const { data: pizzaToppings } = useSelector((state) => state.topping);
+    const { data: pizzaCheeses } = useSelector((state) => state.cheese);
 
 
     const [quantity, setQuantity] = useState(1);
@@ -31,46 +29,51 @@ const CustomPizza = () => {
     const [pizzaSauceVal, setPizzaSauceVal] = useState();
     const [pizzaCheeseVal, setPizzaCheeseVal] = useState();
     const [pizzaToppingsVal, setPizzaToppingsVal] = useState([]);
-    const [extraOptions, setExtraOptions] = useState([]);
-
-
+    const selectedExtras = [
+        ...pizzaToppingsVal,
+        pizzaSauceVal,
+        pizzaCheeseVal,
+    ].filter((option) => option && option.name);
 
     useEffect(() => {
-        if (token) {
-            dispatch(fetchCheeses());
-            dispatch(searchCrusts());
-            dispatch(searchSauces());
-            dispatch(searchToppings());
-
-
-
-        }
-    }, [])
+        dispatch(fetchCheeses());
+        dispatch(searchCrusts());
+        dispatch(searchSauces());
+        dispatch(searchToppings());
+    }, [dispatch])
 
 
 
     const handleChooseToppings = (e, topping) => {
         if (e.target.checked) {
-            setPizzaToppingsVal([...pizzaToppingsVal, { id: topping._id, name: topping.name, category: topping.category, price: topping.price }]);
-        } else {
-            pizzaToppingsVal.pop();
-        }
+            setPizzaToppingsVal((currentToppings) => {
+                if (currentToppings.some((item) => item.id === topping._id)) {
+                    return currentToppings;
+                }
 
-        setExtraOptions([...pizzaToppingsVal, { ...pizzaSauceVal }, { ...pizzaCheeseVal }]);
+                return [
+                    ...currentToppings,
+                    { id: topping._id, name: topping.name, category: topping.category, price: topping.price }
+                ];
+            });
+        } else {
+            setPizzaToppingsVal((currentToppings) =>
+                currentToppings.filter((item) => item.id !== topping._id)
+            );
+        }
     }
 
 
     const addToCart = async (e) => {
         e.preventDefault();
         if (pizzaToppingsVal.length !== 0) {
-            setExtraOptions([...pizzaToppingsVal, { ...pizzaSauceVal }, { ...pizzaCheeseVal }]);
-            if (token) {
+            if (localStorage.getItem("token")) {
                 try {
-                    const response = await axios.post(`${API_BASE_URL}/api/product/cart/addToCart`, {
+                    await axios.post(`${API_BASE_URL}/api/product/cart/addToCart`, {
                         name: pizzaCrustVal.name,
                         variant: { ...variantVal },
                         price: (pizzaCrustVal.price),
-                        extraOptions:[...pizzaToppingsVal, { ...pizzaSauceVal }, { ...pizzaCheeseVal }],
+                        extraOptions: selectedExtras,
                         quantity: quantity,
                         productId: pizzaCrustVal.id,
                     },
@@ -205,12 +208,12 @@ const CustomPizza = () => {
 
                 <div className='variants-container' >
                     <br />
-                    {extraOptions.length == 0 && (
+                    {pizzaToppingsVal.length === 0 && (
                         <>
-                            <p className='poppins-medium' style={{ textAlign: "center", color: "var(--color-create-hover)" }}>Choose a Topping...</p>
+                            <p className='poppins-medium' style={{ textAlign: "center", color: "var(--color-create-hover)" }}>Choose one or more toppings...</p>
                         </>
                     )}
-                    <p className='poppins-medium' style={{ textAlign: "center", color: "var(--text-colora)" }}>Toppings :</p>
+                    <p className='poppins-medium' style={{ textAlign: "center", color: "var(--text-colora)" }}>Toppings (multi-select):</p>
                     <div className="options-container" >
                         {pizzaToppings.map(topping => (
                             <div className="option" key={topping._id}>
@@ -218,15 +221,18 @@ const CustomPizza = () => {
                                     type="checkbox"
                                     className="toppings-option"
                                     id={`topping-${topping._id}`}
-                                    value={{ id: topping._id, name: topping.name, category: topping.category, price: topping.price }}
+                                    checked={pizzaToppingsVal.some((item) => item.id === topping._id)}
                                     onChange={(e) => { handleChooseToppings(e, topping) }}
                                 />
                                 <label htmlFor={`topping-${topping._id}`}>{topping.name}({topping.category})</label>
                                 <input type="text" name="topping-price" value={`Price : ${topping.price}rs`} style={{ padding: ".3rem" }} readOnly />
                             </div>
                         ))}
-
-
+                        {pizzaToppings.length === 0 && (
+                            <p className='poppins-medium' style={{ textAlign: "center", color: "var(--text-colora)" }}>
+                                No toppings are available right now.
+                            </p>
+                        )}
                     </div>
                 </div>
 

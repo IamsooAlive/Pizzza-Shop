@@ -7,6 +7,8 @@ const { sendPasswordResetEmail } = require("../config/mailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const normalizeEmail = (email = "") => email.trim().toLowerCase();
+
 //function to register user
 const registerUser = async_handler(async (req, res) => {
     const { name, email, password, address } = req.body;
@@ -16,7 +18,8 @@ const registerUser = async_handler(async (req, res) => {
         throw new Error("Please enter all the fields");
     }
 
-    const userExists = await User.findOne({ email });
+    const normalizedEmail = normalizeEmail(email);
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
         res.status(400);
         throw new Error("User already exists!");
@@ -25,7 +28,7 @@ const registerUser = async_handler(async (req, res) => {
     //create an User object in User model
     const newUser = await User.create({
         name,
-        email,
+        email: normalizedEmail,
         password,
         address,
     })
@@ -49,7 +52,7 @@ const registerUser = async_handler(async (req, res) => {
 const loginUser = async_handler(async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizeEmail(email) });
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -135,13 +138,18 @@ const requestPasswordReset = async_handler(async (req, res) => {
         res.status(400);
         throw new Error("Email is required");
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizeEmail(email) });
     // Always return same response to prevent email enumeration
     if (!user) {
         return res.json({ success: true, message: "If this email exists, a reset link has been sent." });
     }
     const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-    await sendPasswordResetEmail(user.email, resetToken);
+    try {
+        await sendPasswordResetEmail(user.email, resetToken);
+    } catch (error) {
+        res.status(500);
+        throw new Error(error.message || "Failed to send password reset email");
+    }
     res.json({ success: true, message: "If this email exists, a reset link has been sent." });
 })
 
@@ -152,6 +160,10 @@ const forgotPassword = async_handler(async (req, res) => {
         res.status(400);
         throw new Error("Reset token and new password are required");
     }
+    if (password.length < 8) {
+        res.status(400);
+        throw new Error("Password must be at least 8 characters long");
+    }
     let decoded;
     try {
         decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
@@ -161,7 +173,11 @@ const forgotPassword = async_handler(async (req, res) => {
     }
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(password, salt);
-    await User.findByIdAndUpdate(decoded.userId, { password: hashed });
+    const updatedUser = await User.findByIdAndUpdate(decoded.userId, { password: hashed });
+    if (!updatedUser) {
+        res.status(404);
+        throw new Error("User not found");
+    }
     res.status(200).json({ message: "Password changed successfully!" });
 })
 

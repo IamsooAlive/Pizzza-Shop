@@ -98,6 +98,54 @@ const PRODUCTS = [
         image: "",
     },
     {
+        name: "Pepperoni",
+        product_type: 3,
+        variants: [
+            { name: "Regular", price: 45 },
+        ],
+        price: 45,
+        quantity: 100,
+        description: "Classic pepperoni topping.",
+        category: "Non-veg",
+        image: "",
+    },
+    {
+        name: "Onions",
+        product_type: 3,
+        variants: [
+            { name: "Regular", price: 30 },
+        ],
+        price: 30,
+        quantity: 100,
+        description: "Fresh sliced onions for extra crunch.",
+        category: "Veg",
+        image: "",
+    },
+    {
+        name: "Black Olives",
+        product_type: 3,
+        variants: [
+            { name: "Regular", price: 35 },
+        ],
+        price: 35,
+        quantity: 100,
+        description: "Briny black olives for a savory finish.",
+        category: "Veg",
+        image: "",
+    },
+    {
+        name: "Mushrooms",
+        product_type: 3,
+        variants: [
+            { name: "Regular", price: 40 },
+        ],
+        price: 40,
+        quantity: 100,
+        description: "Sauteed mushrooms for earthy flavor.",
+        category: "Veg",
+        image: "",
+    },
+    {
         name: "Mozzarella",
         product_type: 4,
         variants: [

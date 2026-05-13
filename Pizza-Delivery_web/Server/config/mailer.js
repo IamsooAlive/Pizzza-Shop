@@ -1,9 +1,21 @@
 const { Resend } = require("resend");
 
 const sendPasswordResetEmail = async (toEmail, resetToken) => {
+    if (!process.env.RESEND_API_KEY) {
+        throw new Error("Password reset email is not configured: missing RESEND_API_KEY.");
+    }
+
+    if (!process.env.FROM_EMAIL) {
+        throw new Error("Password reset email is not configured: missing FROM_EMAIL.");
+    }
+
+    if (!process.env.CLIENT_URL) {
+        throw new Error("Password reset email is not configured: missing CLIENT_URL.");
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY);
     const resetUrl = `${process.env.CLIENT_URL}/forgot_password?token=${resetToken}`;
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
         from: process.env.FROM_EMAIL,
         to: toEmail,
         subject: "Reset your PizzaLand password",
@@ -18,6 +30,10 @@ const sendPasswordResetEmail = async (toEmail, resetToken) => {
             </div>
         `,
     });
+
+    if (error) {
+        throw new Error(`Failed to send password reset email: ${error.message || "Unknown Resend error"}`);
+    }
 };
 
 module.exports = { sendPasswordResetEmail };

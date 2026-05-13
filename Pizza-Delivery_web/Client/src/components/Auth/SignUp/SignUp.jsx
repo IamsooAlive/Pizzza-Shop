@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import API_BASE_URL from '../../../config/api.js';
+import { parseApiResponse } from '../../../utils/api.js';
 
 const SignUp = () => {
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", address: "" });
@@ -13,30 +14,31 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        const response = await fetch(`${API_BASE_URL}/api/user/signup`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: credentials.name,
-                email: credentials.email,
-                password: credentials.password,
-                address: credentials.address
-            }),
-        });
-        if(response.status===400){
-            setError("Sign up failed. Please check your details and try again.");
-        }else{
-            const json = await response.json();
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/user/signup`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: credentials.name,
+                    email: credentials.email,
+                    password: credentials.password,
+                    address: credentials.address
+                }),
+            });
+
+            const json = await parseApiResponse(response, "Sign up failed. Please try again.");
+
             if (json.success) {
                 alert("Signed Up successfully!")
-    
+                setCredentials({ name: "", email: "", password: "", address: "" });
                 navigate("/login");
             }
+        } catch (error) {
+            setError(error.message);
         }
-
-        setCredentials({ name: "", email: "", password: "", address: "" });
     };
 
     const onChange = (e) => {

@@ -6,6 +6,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const { connectDB } = require("./config/db");
+const { errorHandler, notFound } = require("./middlewares/errorHandler");
 const port = process.env.PORT;
 
 
@@ -34,6 +35,9 @@ app.use("/api/user/request_password_reset", authLimiter);
 app.use("/api/user", AuthRoutes);
 app.use("/api/order", OrderRoutes); 
 app.use("/api/product", ProductRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 connectDB();
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import API_BASE_URL from '../../../config/api.js';
+import { parseApiResponse } from '../../../utils/api.js';
 
 const token = localStorage.getItem("token");
 
@@ -25,15 +26,16 @@ const ForgotPassword = () => {
     const handleRequestReset = async (e) => {
         e.preventDefault();
         setError("");
-        const response = await fetch(`${API_BASE_URL}/api/user/request_password_reset`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-        });
-        if (response.ok) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/user/request_password_reset`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+            await parseApiResponse(response, "Something went wrong. Please try again.");
             setSent(true);
-        } else {
-            setError("Something went wrong. Please try again.");
+        } catch (requestError) {
+            setError(requestError.message);
         }
     };
 
@@ -44,15 +46,16 @@ const ForgotPassword = () => {
             setResetError("Passwords do not match.");
             return;
         }
-        const response = await fetch(`${API_BASE_URL}/api/user/forgot_password`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resetToken, password }),
-        });
-        if (response.ok) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/user/forgot_password`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ resetToken, password }),
+            });
+            await parseApiResponse(response, "Reset link is invalid or has expired. Please request a new one.");
             navigate("/login");
-        } else {
-            setResetError("Reset link is invalid or has expired. Please request a new one.");
+        } catch (requestError) {
+            setResetError(requestError.message);
         }
     };
 
