@@ -3,6 +3,7 @@ import {
   /*This is the recommended router for all React Router web projects. It uses the DOM(Document Object Model) History API to update the URL and manage the history stack.
 It also enables the v6.4 data APIs like loaders, actions, fetchers and more. */
   RouterProvider,
+  Navigate,
   /*All data router objects are passed to this component to render your app and enable the rest of the data APIs. */
   Outlet,
   /* An '<Outlet>' should be used in parent route elements to render their child route elements. This allows nested UI to show up when child routes are rendered. If the parent route matched exactly, it will render a child index route or nothing if there is no index route. */
@@ -54,6 +55,16 @@ const DashboardLayOut=()=>{
   )
 }
 
+const ProtectedDashboardLayout = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <DashboardLayOut />;
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -91,7 +102,7 @@ const router = createBrowserRouter([
      
       {
         path: "/profile_dashboard",
-        element: <DashboardLayOut/> ,
+        element: <ProtectedDashboardLayout /> ,
         children:[
           {
             path:"",

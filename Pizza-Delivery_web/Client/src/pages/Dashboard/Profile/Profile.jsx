@@ -4,8 +4,6 @@ import { useNavigate} from 'react-router-dom';
 import { getUserDetails } from '../../../redux/slices/userSlice';
 import { STATUSES } from '../../../redux/slices/productSlice';
 
-const token = localStorage.getItem("token");
-
 const Profile = () => {
   const dispatch=useDispatch();
   const {data:userDetails,status} = useSelector((state)=>state.user);
@@ -13,15 +11,10 @@ const Profile = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      if (!token) {
-        navigate("/login");
+      if (localStorage.getItem("token")) {
+        dispatch(getUserDetails());
       }
-    }, []);
-
-
-    useEffect(() => {
-      dispatch(getUserDetails());
-    }, []);
+    }, [dispatch]);
 
     if (status === STATUSES.LOADING) {
       return <h2>Loading....</h2>;

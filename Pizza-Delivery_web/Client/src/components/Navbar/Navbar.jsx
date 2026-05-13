@@ -7,8 +7,6 @@ import { fetchCartItems } from '../../redux/slices/cartSlice';
 import { getUserDetails } from '../../redux/slices/userSlice';
 import { fetchProductsBelow20 } from '../../redux/slices/productsBelow20Slice';
 
-const token = localStorage.getItem("token");
-
 
 const Menu = () => {
 
@@ -26,7 +24,7 @@ const Menu = () => {
     );
 };
 
-const UserMenu = ({ handleClick, display }) => {
+const UserMenu = ({ handleClick, display, token }) => {
     return (
         <div className='user-account-menu  navbar-menu_account_container poppins-medium' style={{ display: `${display}` }}>
 
@@ -65,28 +63,30 @@ const UserMenu = ({ handleClick, display }) => {
 }
 
 const Navbar = () => {
-    const navigate = useNavigate()
     const dispatch = useDispatch();
-    const { data: products, totalPrice, totalItems, status } = useSelector((state) => state.cart);
+    const token = localStorage.getItem("token");
+    const { totalItems } = useSelector((state) => state.cart);
 
-    const { data: user, sTs } = useSelector((state) => state.user);
+    const { data: user } = useSelector((state) => state.user);
 
 
 
-    const { data: productsBelow20, sts } = useSelector((state) => state.productsBelow20);
+    const { data: productsBelow20 } = useSelector((state) => state.productsBelow20);
 
 
 
     useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        } else {
+        if (token) {
             dispatch(getUserDetails());
             dispatch(fetchCartItems());
-            dispatch(fetchProductsBelow20());
-
         }
-    }, [])
+    }, [dispatch, token])
+
+    useEffect(() => {
+        if (token && user.isAdmin === true) {
+            dispatch(fetchProductsBelow20());
+        }
+    }, [dispatch, token, user.isAdmin])
 
 
 
@@ -125,7 +125,7 @@ const Navbar = () => {
                 <button className="navbar-icon-btn" aria-label="Account menu" onClick={handleOpenUserMenu}>
                     <i className="fa-solid fa-circle-user user-icon" aria-hidden="true"></i>
                 </button>
-                <UserMenu display={display} handleClick={() => { setOpenUserMenu(false) }} />
+                <UserMenu display={display} token={token} handleClick={() => { setOpenUserMenu(false) }} />
                 {!token && (
                     <Link to="/login" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i></Link>
                 )}
@@ -157,7 +157,7 @@ const Navbar = () => {
                                 <button className="navbar-icon-btn" aria-label="Account menu" onClick={handleOpenUserMenu}>
                                     <i className="fa-solid fa-circle-user user-icon" aria-hidden="true"></i>
                                 </button>
-                                <UserMenu display={display} handleClick={() => { setOpenUserMenu(false) }} />
+                                <UserMenu display={display} token={token} handleClick={() => { setOpenUserMenu(false) }} />
                                 {!token && (
                                     <Link to="/login" aria-label="Cart"><i className="fa-solid fa-cart-shopping cart-icon" aria-hidden="true"></i></Link>
                                 )}

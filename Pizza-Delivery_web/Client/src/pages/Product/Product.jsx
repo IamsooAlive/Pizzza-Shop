@@ -7,8 +7,6 @@ import axios from "axios";
 import toppingImg from "../../assets/veg-toppings.jpg";
 import API_BASE_URL from '../../config/api.js';
 
-const token = localStorage.getItem("token");
-
 const Product = () => {
 
   const navigate = useNavigate();
@@ -38,14 +36,8 @@ const Product = () => {
   }
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    } else {
-
-      getProductDetails();
-    }
-
-  }, []);
+    getProductDetails();
+  }, [productId]);
 
 
 
@@ -55,6 +47,7 @@ const Product = () => {
 
 
   const addToCart = async () => {
+    const token = localStorage.getItem("token");
     if (token) {
       if (variantVal === null) {
         alert("Please select a variant")

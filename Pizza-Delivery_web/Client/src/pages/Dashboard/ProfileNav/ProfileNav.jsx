@@ -6,26 +6,22 @@ import { getUserDetails } from '../../../redux/slices/userSlice';
 import { STATUSES } from '../../../redux/slices/productSlice';
 import { fetchProductsBelow20 } from '../../../redux/slices/productsBelow20Slice';
 
-const token = localStorage.getItem("token");
-
 const ProfileNav = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { data: user, status } = useSelector((state) => state.user);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login")
-    } else {
+    if (token) {
       dispatch(getUserDetails());
     }
-  }, [])
+  }, [dispatch, token])
 
   useEffect(() => {
-
-    dispatch(fetchProductsBelow20());
-
-  }, [])
+    if (token && user.isAdmin === true) {
+      dispatch(fetchProductsBelow20());
+    }
+  }, [dispatch, token, user.isAdmin])
 
   const { data: productsBelow20, sts } = useSelector((state) => state.productsBelow20);
 

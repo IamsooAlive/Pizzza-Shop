@@ -71,12 +71,19 @@ const Products = () => {
     }
   ]
   return (
-    <div className='main-div'>
+    <div className='main-div' id="veg_pizzas">
       <h1 className='poppins-semibold section-title'>Our Menu</h1>
       <div className="product-categories">
         {Categories && Categories.map(c => {
+          const sectionIdMap = {
+            "Veg Pizzas": "veg_pizzas",
+            "Non Veg Pizzas": "chicken_pizzas",
+            "Pizza Crusts": "pizza_crusts",
+            "Pizza Toppings": "pizza_toppings",
+          };
+
           return (
-            <div key={c.id} onClick={() => {
+            <div key={c.id} id={sectionIdMap[c.title]} onClick={() => {
               if (c.link) {
                 navigate(c.link);
               } else {

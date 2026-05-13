@@ -32,29 +32,29 @@ const Footer = () => {
           </div>
           <div className="footer-links_div">
             <h4>Menu</h4>
-            <p><Link to="#veg_pizzas">Veg Pizzas</Link></p>
-            <p><Link to="#chicken_pizzas">Chicken Pizzas</Link></p>
-            <p><Link to="#pizza_crusts">Pizza Crusts</Link></p>
-            <p><Link to="#pizza_toppings">Pizza Toppings</Link></p>
+            <p><a href="/#veg_pizzas">Veg Pizzas</a></p>
+            <p><a href="/#chicken_pizzas">Chicken Pizzas</a></p>
+            <p><a href="/#pizza_crusts">Pizza Crusts</a></p>
+            <p><a href="/#pizza_toppings">Pizza Toppings</a></p>
             <p><Link to="/custom_pizza">Customize a Pizza</Link></p>
 
 
           </div>
           <div className="footer-links_div">
             <h4>Company</h4>
-            <p><Link to="#">Blog</Link></p>
+            <p><span>Blog</span></p>
             <p><Link to="/about">About Us</Link></p>
-            <p><Link to="#">Investor</Link></p>
-            <p><Link to="#">Feedback</Link></p>
-            <p><Link to="#">Ads</Link></p>
+            <p><span>Investor</span></p>
+            <p><span>Feedback</span></p>
+            <p><span>Ads</span></p>
           </div>
         
           
           <div className="footer-links_div">
             <h4>Legal</h4>
-            <p><Link to="#">Disclaimer</Link></p>
-            <p><Link to="#">Terms & Conditions</Link></p>
-            <p><Link to="#">Privacy Policy</Link></p>
+            <p><span>Disclaimer</span></p>
+            <p><span>Terms & Conditions</span></p>
+            <p><span>Privacy Policy</span></p>
           </div>
 
         </div>

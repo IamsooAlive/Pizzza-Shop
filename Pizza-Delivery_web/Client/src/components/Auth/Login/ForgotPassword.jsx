@@ -3,8 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import API_BASE_URL from '../../../config/api.js';
 import { parseApiResponse } from '../../../utils/api.js';
 
-const token = localStorage.getItem("token");
-
 const ForgotPassword = () => {
     const [searchParams] = useSearchParams();
     const resetToken = searchParams.get("token");
@@ -20,8 +18,9 @@ const ForgotPassword = () => {
     const [resetError, setResetError] = useState("");
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
         if (token) navigate("/");
-    }, []);
+    }, [navigate]);
 
     const handleRequestReset = async (e) => {
         e.preventDefault();
